@@ -2,17 +2,24 @@ package com.email.writer.app;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Map;
 
 @Service
 public class EmailGeneratorService {
 
+    private final WebClient webClient;
+
     @Value("${gemini.api.url}")
     private String geminiApiUrl;
 
     @Value("${gemini.api.key}")
     private String geminiApiKey;
+
+    public EmailGeneratorService(WebClient webClient) {
+        this.webClient = webClient;
+    }
 
 
     public String generateEmailReply(EmailRequest emailRequest) {
@@ -29,9 +36,23 @@ public class EmailGeneratorService {
         );
 
         //DO request and get response
+        String response = webClient.post()
+                .uri(geminiApiUrl + geminiApiKey)
+                .header("Content-Type", "application/json")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        // Extract Response Return
+        return extractResponseContent(response);
 
-        // Return response
+    }
 
+    private String extractResponseContent(String response) {
+        try{
+
+        } catch (Exception e) {
+            return "Error processing response: " + e.getMessage();
+        }
     }
 
     private String buildPrompt(EmailRequest emailRequest) {
