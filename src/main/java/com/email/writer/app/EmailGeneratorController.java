@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
+
 @RequestMapping("api/email")
 public class EmailGeneratorController {
 
