@@ -19,8 +19,8 @@ public class EmailGeneratorService {
     @Value("${gemini.api.key}")
     private String geminiApiKey;
 
-    public EmailGeneratorService(WebClient webClient) {
-        this.webClient = webClient;
+    public EmailGeneratorService(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
     }
 
 
@@ -50,11 +50,12 @@ public class EmailGeneratorService {
     }
 
     private String extractResponseContent(String response) {
-        try{
+        try{ // this try & catch tells us if there is an error and give the error mentioned in the catch
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(response);
-            return rootNode.path("contents")
+            return rootNode.path("candidates")
                     .get(0)
+                    .path("content")
                     .path("parts")
                     .get(0)
                     .path("text")
